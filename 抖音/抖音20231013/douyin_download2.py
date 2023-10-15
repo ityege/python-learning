@@ -65,8 +65,8 @@ for request in driver.requests:
             pass
         else:
             distinct.add(request.url)
-            # 保存视频
-            filename = "sp1/" + str(uuid.uuid4()) + ".mp4"  # 保存的文件名
+            # 保存视频 保存为flv再转码成mp4,不让导入pr音频有问题
+            filename = "sp1/" + str(uuid.uuid4()) + ".flv"  # 保存的文件名
             with open(filename, "wb") as file:
                 file.write(request.response.body)
 
