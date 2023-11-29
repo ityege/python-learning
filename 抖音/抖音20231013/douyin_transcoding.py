@@ -11,7 +11,7 @@ arguments = sys.argv
 # 创建日志记录器
 logger = logging.getLogger(__name__)
 # 配置日志文件路径和格式
-log_file = 'log_douyin_transcoding.log'
+log_file = f'{arguments[1]}/log_douyin_transcoding.log'
 log_format = '%(asctime)s - %(levelname)s - %(message)s'
 
 # 创建文件处理器并添加到日志记录器
@@ -23,11 +23,13 @@ logger.addHandler(file_handler)
 logger.setLevel(logging.INFO)
 
 os.chdir(arguments[1])
+
 # 获取当前目录
 current_dir = os.getcwd()
 
 # 获取当前目录中的所有文件
-files = [f for f in os.listdir(current_dir) if os.path.isfile(os.path.join(current_dir, f))]
+files = [f for f in os.listdir(current_dir) if os.path.isfile(os.path.join(current_dir, f)) and f.endswith('.flv')]
+
 
 # 获取文件名（不包括后缀名）
 file_names = [os.path.splitext(f)[0] for f in files]
@@ -39,7 +41,7 @@ for file_name in tqdm(file_names, desc='Processing', unit='file'):
     # ml = f"ffmpeg -i {file_name}.flv {file_name}.mp4"
     # return_value = os.system(ml)
     # 执行命令，将输出重定向到空设备
-    ml = f'ffmpeg -i {file_name}.flv {file_name}.mp4 >> run.log 2>&1'
+    ml = f'ffmpeg -y -hwaccel dxva2 -i {file_name}.flv {file_name}.mp4 >> run.log 2>&1'
     # print(ml)
     return_value = subprocess.call(ml, shell=True)
     logger.info("转码返回值:{},转码进度:{},总视频数量:{}".format(return_value, a, len(file_names)))
